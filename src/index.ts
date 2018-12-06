@@ -1,4 +1,5 @@
 import { Context } from 'koa';
+import * as compose from 'koa-compose';
 import * as pathToRegexp from 'path-to-regexp';
 
 import { match, decode } from './utils';
@@ -16,17 +17,21 @@ export interface Params {
   [key: string]: string;
 };
 
-export type Handler = (ctx: Context, next: () => Promise<void>) => Promise<void>;
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
 
-const createMethod = (method: string) => {
-  if (method) method = method.toUpperCase();
+export type Next = () => Promise<any>;
 
-  return (path: string, handler: Handler) => {
+export type Handler = (ctx: Context, next: Next) => Promise<void>;
+
+const createMethod = (method: Method) => {
+  return (path: string, ...handlers: Handler[]) => {
     const keys: pathToRegexp.Key[] = [];
     const re = pathToRegexp(path, keys);
-    debug('%s %s -> %s', method || 'ALL', path, re);
+    const handler = handlers.length === 1 ? handlers[0] : compose(handlers);
+    /* istanbul ignore next */
+    debug('%s %s -> %s', method || 'ALL', path, re)
 
-    return async function (ctx: Context, next: () => Promise<void>) {
+    return async function (ctx: Context, next: Next) {
       // method
       if (!match(ctx, method)) return next();
 
@@ -37,7 +42,7 @@ const createMethod = (method: string) => {
         ctx.routePath = path;
         ctx.params = keys.reduce((last, item, index) => (last[item.name] = args[index], last), {});
 
-        debug('%s %s matches %s', ctx.method, path, ctx.path, JSON.stringify(ctx.params));
+        debug('%s %s matches %s', method, path, ctx.path, JSON.stringify(ctx.params));
 
         return await handler(ctx, next);
       }
@@ -48,10 +53,10 @@ const createMethod = (method: string) => {
   };
 };
 
-export const get = createMethod('get');
-export const post = createMethod('post');
-export const put = createMethod('put');
-export const patch = createMethod('patch');
-export const del = createMethod('delete');
-export const head = createMethod('head');
-export const options = createMethod('options');
+export const get = createMethod('GET');
+export const post = createMethod('POST');
+export const put = createMethod('PUT');
+export const patch = createMethod('PATCH');
+export const del = createMethod('DELETE');
+export const head = createMethod('HEAD');
+export const options = createMethod('OPTIONS');
