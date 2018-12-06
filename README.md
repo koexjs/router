@@ -37,9 +37,26 @@ app.use(router.get('/product/:pid', async (ctx) => {
   ctx.body = ctx.params.pid;
 }));
 
-app.use(router.get('/product/:pid/:cid', async (ctx) => {
+// support middlewares for router
+const md5 = crypto.createHash('md5').update('123').digest('hex');
+
+const responseTime = async (ctx, next) => {
+  const start = Date.now();
+  await next();
+  ctx.set('X-Response-Time', Date.now() - start);
+};
+
+const requestId = async (ctx, next) => {
+  await next();
+  const id = md5(ctx.url + Date.now());
+  ctx.set('X-Request-Id', id);
+};
+
+const handler = async (ctx) => {
   ctx.body = ctx.params.pid + ': ' + ctx.params.cid;
-}));
+};
+
+app.use(router.get('/product/:pid/:cid', responseTime, requestId, handler));
 
 // fallback
 app.use(async (ctx) => {
@@ -57,3 +74,4 @@ app.listen(8000, '0.0.0.0', () => {
 ### Related
 * [koa-router](https://github.com/alexmingoia/koa-router)
 * [koa-route](https://github.com/koajs/route)
+* [koa-compose](https://github.com/koajs/compose)
