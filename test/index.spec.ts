@@ -132,4 +132,42 @@ describe('koa router', () => {
         .expect(200, 'hello, world');
     });
   });
+
+  describe('should support multiple middlewares', () => {
+    const app = new Koa();
+    const preMiddleware: Koa.Middleware = async function (ctx, next) {
+      ctx.state.pre = 'pre';
+      return next();
+    };
+
+    const middleware: Koa.Middleware = async function (ctx, next) {
+      ctx.state.mid = 'mid'
+      await next();
+      ctx.set('X-Post-Action1', 'mid');
+      ctx.state.mid1 = 'mid1';
+    };
+
+    const postMiddleware: Koa.Middleware = async function(ctx, next) {
+      await next();
+      ctx.set('X-Post-Action2', 'post');
+      ctx.state.post = 'post';
+    }
+
+    app.use(get('/:id', preMiddleware, middleware, postMiddleware, async ctx => {
+      ctx.state.should.have.property('pre');
+      ctx.state.should.have.property('mid');
+      ctx.state.should.not.have.property('mid1');
+      ctx.state.should.not.have.property('post');
+
+      ctx.body = ctx.params;
+    }));
+
+    it('should parse one param', async () => {
+      await request(app.listen())
+        .get('/xxxx')
+        .expect('X-Post-Action1', 'mid')
+        .expect('X-Post-Action2', 'post')
+        .expect(200, { id: 'xxxx' });
+    });
+  });
 });
