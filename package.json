@@ -1,10 +1,10 @@
 {
-  "name": "@zcorky/koa-router",
-  "version": "0.0.4",
-  "description": "simple router for koa",
+  "name": "@koex/router",
+  "version": "0.0.1",
+  "description": "router for koa extend",
   "main": "lib/index.js",
   "module": "lib/index.js",
-  "repository": "https://github.com/zcorky/koa-router",
+  "repository": "https://github.com/koexjs/router",
   "author": "Zero",
   "license": "MIT",
   "scripts": {
@@ -27,6 +27,7 @@
     "chai-spies": "^1.0.0",
     "coveralls": "^3.0.2",
     "global": "^4.3.2",
+    "husky": "^1.2.0",
     "koa": "^2.6.2",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
@@ -44,6 +45,11 @@
   "files": [
     "lib/"
   ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
+  },
   "nyc": {
     "check-coverage": true,
     "include": [

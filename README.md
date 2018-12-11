@@ -1,25 +1,24 @@
-# koa-router
+# router
 
-[![NPM version](https://img.shields.io/npm/v/@zcorky/koa-router.svg?style=flat)](https://www.npmjs.com/package/@zcorky/koa-router)
-[![Coverage Status](https://img.shields.io/coveralls/zcorky/koa-router.svg?style=flat)](https://coveralls.io/r/zcorky/koa-router)
-[![Dependencies](https://david-dm.org/@zcorky/koa-router/status.svg)](https://david-dm.org/@zcorky/koa-router)
-[![Build Status](https://travis-ci.com/zcorky/koa-router.svg?branch=master)](https://travis-ci.com/zcorky/koa-router)
-![license](https://img.shields.io/github/license/zcorky/koa-router.svg)
-[![issues](https://img.shields.io/github/issues/zcorky/koa-router.svg)](https://github.com/zcorky/koa-router/issues)
-
+[![NPM version](https://img.shields.io/npm/v/@koex/router.svg?style=flat)](https://www.npmjs.com/package/@koex/router)
+[![Coverage Status](https://img.shields.io/coveralls/koexjs/router.svg?style=flat)](https://coveralls.io/r/koexjs/router)
+[![Dependencies](https://img.shields.io/david/koexjs/router.svg)](https://github.com/koexjs/router)
+[![Build Status](https://travis-ci.com/koexjs/router.svg?branch=master)](https://travis-ci.com/koexjs/router)
+![license](https://img.shields.io/github/license/koexjs/router.svg)
+[![issues](https://img.shields.io/github/issues/koexjs/router.svg)](https://github.com/koexjs/router/issues)
 > Simple Router for Koa
 
 ### Install
 
 ```
-$ npm install @zcorky/koa-router
+$ npm install @koex/router
 ```
 
 ### Usage
 
 ```javascript
 // See more in test
-import * as router from '@zcorky/koa-router';
+import * as router from '@koex/router';
 
 import * as Koa from 'koa';
 const app = new Koa();
