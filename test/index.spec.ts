@@ -2,7 +2,9 @@ import * as Koa from 'koa';
 import * as request from 'supertest';
 import 'should';
 
-import { get, post, put, patch, del, head, options } from '../src';
+import * as router from '../src';
+
+const { get, post, put, patch, del, head, options } = router;
 
 describe('koa router', () => {
   describe('the same path with different methods', () => {
@@ -168,6 +170,50 @@ describe('koa router', () => {
         .expect('X-Post-Action1', 'mid')
         .expect('X-Post-Action2', 'post')
         .expect(200, { id: 'xxxx' });
+    });
+  });
+
+  describe('support router.routes', () => {
+    const app = new Koa();
+    router.get('/routes/no/path/here', async ctx => {
+      ctx.body = 'GET /routes/no/path/here';
+    });
+    router.post('/routes/no/path/here', async ctx => {
+      ctx.body = 'POST /routes/no/path/here';
+    });
+    router.put('/routes/no/path/here', async ctx => {
+      ctx.body = 'PUT /routes/no/path/here';
+    });
+    router.del('/routes/no/path/here', async ctx => {
+      ctx.body = 'DELETE /routes/no/path/here';
+    });
+
+    app.use(router.routes());
+
+    it('get routes', async () => {
+      await request(app.callback())
+        .get('/routes/no/path/here')
+        .expect(200, 'GET /routes/no/path/here');
+    });
+    it('post routes', async () => {
+      await request(app.callback())
+        .post('/routes/no/path/here')
+        .expect(200, 'POST /routes/no/path/here');
+    });
+    it('put routes', async () => {
+      await request(app.callback())
+        .put('/routes/no/path/here')
+        .expect(200, 'PUT /routes/no/path/here');
+    });
+    it('del routes', async () => {
+      await request(app.callback())
+        .del('/routes/no/path/here')
+        .expect(200, 'DELETE /routes/no/path/here');
+    });
+    it('patch routes', async () => {
+      await request(app.callback())
+        .patch('/routes/no/path/here')
+        .expect(404, 'Not Found');
     });
   });
 });

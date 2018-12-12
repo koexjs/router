@@ -72,6 +72,8 @@
     "access": "public"
   },
   "dependencies": {
+    "@zcorky/cache": "^1.0.0",
+    "@zcorky/lru": "^1.0.2",
     "koa-compose": "^4.1.0",
     "path-to-regexp": "^2.4.0"
   }

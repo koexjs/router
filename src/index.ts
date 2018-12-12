@@ -1,4 +1,4 @@
-import { Context } from 'koa';
+import { Context, Middleware } from 'koa';
 import * as compose from 'koa-compose';
 import * as pathToRegexp from 'path-to-regexp';
 
@@ -23,6 +23,8 @@ export type Next = () => Promise<any>;
 
 export type Handler = (ctx: Context, next: Next) => Promise<void>;
 
+const routesCache = new Map<string, Middleware>();
+
 const createMethod = (method: Method) => {
   return (path: string, ...handlers: Handler[]) => {
     const keys: pathToRegexp.Key[] = [];
@@ -31,7 +33,7 @@ const createMethod = (method: Method) => {
     /* istanbul ignore next */
     debug('%s %s -> %s', method || 'ALL', path, re)
 
-    return async function (ctx: Context, next: Next) {
+    const middleware = async function (ctx: Context, next: Next) {
       // method
       if (!match(ctx, method)) return next();
 
@@ -50,6 +52,11 @@ const createMethod = (method: Method) => {
       // miss
       await next();
     };
+
+    const key = `${method} ${path}`;
+    routesCache.set(key, middleware);
+
+    return middleware;
   };
 };
 
@@ -60,3 +67,8 @@ export const patch = createMethod('PATCH');
 export const del = createMethod('DELETE');
 export const head = createMethod('HEAD');
 export const options = createMethod('OPTIONS');
+
+export const routes = () => {
+  const routeMiddlewares = [...routesCache.values()];
+  return compose(routeMiddlewares);
+};
