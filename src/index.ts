@@ -33,7 +33,7 @@ const createMethod = (method: Method) => {
     /* istanbul ignore next */
     debug('%s %s -> %s', method || 'ALL', path, re)
 
-    const middleware = async function (ctx: Context, next: Next) {
+    const koexRouter = async function (ctx: Context, next: Next) {
       // method
       if (!match(ctx, method)) return next();
 
@@ -54,9 +54,9 @@ const createMethod = (method: Method) => {
     };
 
     const key = `${method} ${path}`;
-    routesCache.set(key, middleware);
+    routesCache.set(key, koexRouter);
 
-    return middleware;
+    return koexRouter;
   };
 };
 
