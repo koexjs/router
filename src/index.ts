@@ -1,3 +1,15 @@
+declare module 'koa' {
+  export interface Context {
+    params?: Params;
+    routePath?: string;
+  }
+
+
+  export interface Params {
+    [key: string]: string;
+  }
+}
+
 import { Context, Middleware } from 'koa';
 import * as compose from 'koa-compose';
 import * as pathToRegexp from 'path-to-regexp';
@@ -5,17 +17,6 @@ import * as pathToRegexp from 'path-to-regexp';
 import { match, decode } from './utils';
 
 const debug = require('debug')('koa-router');
-
-declare module 'koa' {
-  export interface Context {
-    params?: Params;
-    routePath?: string;
-  }
-}
-
-export interface Params {
-  [key: string]: string;
-};
 
 export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
 
@@ -68,7 +69,7 @@ export const del = createMethod('DELETE');
 export const head = createMethod('HEAD');
 export const options = createMethod('OPTIONS');
 
-export const routes = () => {
+export const routes = (): (ctx: Context, next: Next) => Promise<void> => {
   const routeMiddlewares = [...routesCache.values()];
-  return compose(routeMiddlewares);
+  return (compose as any)(routeMiddlewares);
 };
