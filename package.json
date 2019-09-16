@@ -1,12 +1,12 @@
 {
   "name": "@koex/router",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "router for koa extend",
   "main": "lib/index.js",
   "repository": "https://github.com/koexjs/router",
   "author": "Zero",
   "license": "MIT",
-  "typings": "typings.d.ts",
+  "typings": "lib/index.d.ts",
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf -rf lib",
