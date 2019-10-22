@@ -4,7 +4,7 @@ import 'should';
 
 import * as router from '../src';
 
-const { get, post, put, patch, del, head, options } = router;
+const { all, get, post, put, patch, del, head, options } = router;
 
 describe('koa router', () => {
   describe('the same path with different methods', () => {
@@ -36,6 +36,10 @@ describe('koa router', () => {
 
     app.use(options('/', async ctx => {
       ctx.status = 200;
+    }));
+
+    app.use(all('/all', async ctx => {
+      ctx.body = 'ALL /all';
     }));
 
     app.use(ctx => {
@@ -82,6 +86,38 @@ describe('koa router', () => {
       await request(app.listen())
         .options('/')
         .expect(200);
+    });
+
+    it('should options /', async () => {
+      await request(app.listen())
+        .options('/')
+        .expect(200);
+    });
+
+    it('should all /all', async () => {
+      await request(app.listen())
+        .options('/all')
+        .expect(200);
+      
+      await request(app.listen())
+        .get('/all')
+        .expect('ALL /all');
+
+      await request(app.listen())
+        .post('/all')
+        .expect('ALL /all');
+
+      await request(app.listen())
+        .put('/all')
+        .expect('ALL /all');
+
+      await request(app.listen())
+        .patch('/all')
+        .expect('ALL /all');
+
+      await request(app.listen())
+        .del('/all')
+        .expect('ALL /all');
     });
 
     it('should fallback to the last middleware', async () => {

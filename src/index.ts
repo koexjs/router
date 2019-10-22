@@ -18,7 +18,7 @@ import { match, decode } from './utils';
 
 const debug = require('debug')('koa-router');
 
-export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'ALL';
 
 export type Next = () => Promise<any>;
 
@@ -36,7 +36,7 @@ const createMethod = (method: Method) => {
 
     const koexRouter = async function (ctx: Context, next: Next) {
       // method
-      if (!match(ctx, method)) return next();
+      if (method !== 'ALL' && !match(ctx, method)) return next();
 
       // path
       const matched = re.exec(ctx.path);
@@ -61,6 +61,7 @@ const createMethod = (method: Method) => {
   };
 };
 
+export const all = createMethod('ALL');
 export const get = createMethod('GET');
 export const post = createMethod('POST');
 export const put = createMethod('PUT');
